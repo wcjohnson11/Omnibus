@@ -23,8 +23,6 @@ MainRouter = (function(_super) {
     });
   };
 
-  console.log('hey');
-
   return MainRouter;
 
 })(Marionette.AppRouter);
