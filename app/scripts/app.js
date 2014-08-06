@@ -15,21 +15,22 @@ App.addRegions({
 });
 
 App.addInitializer((function(_this) {
-  return function(data) {
-    var controller, router;
-    router = new MainRouter();
-    controller = new MainController({
-      router: router,
-      regions: {
-        info: _this.info,
-        search: _this.search,
-        chart: _this.chart,
-        meta: _this.meta
+  return function(options) {
+    _this.router = new MainRouter({
+      controller: new MainController({
+        regions: {
+          info: _this.info,
+          search: _this.search,
+          chart: _this.chart,
+          meta: _this.meta
+        }
+      }),
+      appRoutes: {
+        'bill/:id': 'showBill'
       }
     });
-    return router.processAppRoutes(controller, {
-      'bill/:id': 'showBill'
-    });
+    console.log(_this.router);
+    return console.log(App);
   };
 })(this));
 

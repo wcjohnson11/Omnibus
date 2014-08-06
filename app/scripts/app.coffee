@@ -31,5 +31,6 @@ App.on 'initialize:after', ( options ) ->
   # pushState set to true to eliminate '#'
   if Backbone.history then Backbone.history.start pushState: true
 
+
 module.exports = App
 
