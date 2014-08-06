@@ -10,4 +10,5 @@ class MainRouter extends Marionette.AppRouter
       # Replace true will replace the url without changing the history
       replace: true
 
+  console.log 'hey'
 module.exports = MainRouter

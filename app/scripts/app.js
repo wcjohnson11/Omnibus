@@ -42,4 +42,6 @@ App.on('initialize:after', function(options) {
   }
 });
 
+App.start();
+
 module.exports = App;
