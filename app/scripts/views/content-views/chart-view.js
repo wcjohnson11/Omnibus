@@ -8,8 +8,6 @@ Rickshaw = require('rickshaw');
 d3 = require('d3');
 
 ChartView = (function(_super) {
-  var data;
-
   __extends(ChartView, _super);
 
   function ChartView() {
@@ -20,35 +18,30 @@ ChartView = (function(_super) {
 
   ChartView.prototype.model = "BillModel";
 
-  data = [
-    {
-      x: 0,
-      y: 40
-    }, {
-      x: 1,
-      y: 49
-    }, {
-      x: 2,
-      y: 38
-    }, {
-      x: 3,
-      y: 30
-    }, {
-      x: 4,
-      y: 32
-    }
-  ];
-
   ChartView.prototype.initialize = function() {};
 
   ChartView.prototype.render = function() {
-    var formatDate, simpleBill;
+    var formatDate, i, random, seriesData, simpleBill;
     formatDate = d3.time.format.iso;
     simpleBill = this.model.attributes.results[0];
-    console.log(simpleBill);
+    console.log(simpleBill.actions);
+    seriesData = [[]];
+    random = new Rickshaw.Fixtures.RandomData(50);
+    i = 1;
+    while (i < simpleBill.actions.length) {
+      simpleBill["actions"][i] = {
+        x: formatDate.parse(simpleBill["actions"][i]["datetime"].getTime()),
+        y: 1,
+        description: simpleBill.actions[i]["description"]
+      };
+      seriesData.push(simpleBill['actions'][i]);
+      i++;
+    }
+    console.log(seriesData);
     this.graph = new Rickshaw.Graph({
       element: this.el,
-      renderer: "line",
+      renderer: "multi",
+      dotSize: 5,
       padding: {
         top: 0.02,
         left: 0.02,
@@ -57,7 +50,9 @@ ChartView = (function(_super) {
       },
       series: [
         {
+          name: "overview",
           color: "steelblue",
+          renderer: "line",
           data: [
             {
               x: formatDate.parse(simpleBill["introduced_date"]).getTime(),
@@ -70,13 +65,18 @@ ChartView = (function(_super) {
               y: 1
             }
           ]
+        }, {
+          name: "actions",
+          color: "red",
+          data: seriesData[0],
+          renderer: "scatterplot"
         }
       ]
     });
     this.x_axis = new Rickshaw.Graph.Axis.X({
       graph: this.graph,
       tickFormat: function(x) {
-        return new Date(x * 1000).toLocaleTimeString();
+        return new Date(x).toLocaleDateString();
       }
     });
     this.y_axis = new Rickshaw.Graph.Axis.Time({
@@ -88,7 +88,7 @@ ChartView = (function(_super) {
     this.hoverDetail = new Rickshaw.Graph.HoverDetail({
       graph: this.graph,
       xFormatter: function(x) {
-        return x + " X axes units";
+        return new Date(x).toLocaleDateString();
       },
       yFormatter: function(y) {
         return Math.floor(y) + "% Y axes units";
