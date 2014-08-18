@@ -19,8 +19,7 @@ BillModel = (function(_super) {
   BillModel.prototype.parse = function(response) {
     var data;
     data = {};
-    data.results = JSON.parse(response);
-    return console.log(data.results);
+    return data.results = response;
   };
 
   return BillModel;
