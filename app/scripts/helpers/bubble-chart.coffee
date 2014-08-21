@@ -38,7 +38,7 @@ class BubbleChart
     # used when setting up force and
     # moving around nodes
     @layout_gravity = -0.01
-    @damper = 0.1
+    @damper = 0.07
 
     # these will be set in create_nodes and create_vis
     @vis = null
@@ -47,9 +47,12 @@ class BubbleChart
     @circles = null
 
     # nice looking colors - no reason to buck the trend
-    @fill_color = d3.scale.ordinal()
-      .domain(["low", "medium", "high"])
-      .range(["#d84b2a", "#beccae", "#7aa25c"])
+    @fill_color = d3.scale.linear()
+      .domain([0,800])
+      .range(["#d84b2a", "#7aa25c"])
+      # .domain([0,800])
+      # .range(["#d84b2a", "#7aa25c","#beccae"])
+
 
     # use the max total_amount in the data as the max in the scale's domain
     max_amount = d3.max(@data, (d) -> parseInt(d.last_version.pages))
@@ -108,9 +111,9 @@ class BubbleChart
     @circles.enter().append("circle")
       .attr("r", 0)
       .attr("class","bubble")
-      .attr("fill", (d) => @fill_color(d.group))
+      .attr("fill", (d) => @fill_color(d.x))
       .attr("stroke-width", 1.5)
-      .attr("stroke", (d) => d3.rgb(@fill_color(d.group)).darker())
+      .attr("stroke", (d) => d3.rgb(@fill_color(d.x)).darker())
       .attr("data-bill", (d) -> "#{d.id}")
       .on("mouseover", (d,i) -> that.show_details(d,i,this))
       .on("mouseout", (d,i) -> that.hide_details(d,i,this))
@@ -237,12 +240,23 @@ class BubbleChart
   #highlight moused bill
   show_details: (data, i, element) =>
     sel = d3.select(element)
-    sel.attr("stroke", "black")
+    sel.attr("stroke", "#fff")
+
+    console.log @,sel
+
+    sel.transition()
+      .duration(500)
+      .attr("r", (d) => d.radius + 20)
+    
     sel.moveToFront()
 
   hide_details: (data, i, element) =>
-    d3.select(element).attr("stroke", (d) => d3.rgb(@fill_color(d.group)).darker())
+    sel = d3.select(element)
+    console.log sel
+    sel.attr("stroke", (d) => d3.rgb(@fill_color(d.x)).darker())
+    sel.transition().duration(500).attr("r", (d) => d.radius)
 
+    
 
 
 module.exports = BubbleChart
