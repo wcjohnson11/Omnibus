@@ -58,6 +58,21 @@ class BubbleChart
       # .range(["#DC2039", "#405CD6"])
       .range(["#DC2039", "#2A53C1"])
 
+    legend = d3.select("#legend")
+      .append("ul")
+        .attr("class", "list-inline")
+
+    keys = legend.selectAll("li.key")
+      .data(@fill_color.range())
+
+    keys.enter().append("li")
+      .attr("class", "key")
+      .style("border-top-color", String)
+      .text( (d) ->
+        r = @fill_color.invertExtent(d)
+        formats.percent(r[0])
+      )
+
     @support_scale = d3.scale.linear()
       .domain([0, 1])
       .range([0, @width])
@@ -343,7 +358,5 @@ class BubbleChart
 
   hide_details: (data, i, element) =>
     d3.select(element).attr("stroke", (d) => d3.rgb(@fill_color(d.group)).darker())
-
-
 
 module.exports = BubbleChart
